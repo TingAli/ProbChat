@@ -7,16 +7,12 @@
     android:layout_height="match_parent"
     tools:context="com.bluelead.probchat.MainActivity"
     android:background="@color/colorPrimaryLighter">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/error_message"
-        android:visibility="invisible"/>
     <LinearLayout
+        android:id="@+id/main_loading_ly"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:gravity="center">
         <TextView
             android:id="@+id/pleaseWait_tv"
@@ -29,25 +25,22 @@
             android:layout_width="50dp"
             android:layout_height="50dp"/>
     </LinearLayout>
-
+    <TextView
+        android:id="@+id/main_errorMessage_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_message"
+        android:visibility="invisible"/>
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/main_content"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center_vertical"
-        android:background="@color/colorPrimary"
-        android:padding="5dp">
-        <CheckBox
-            android:id="@+id/watch_cb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:layout_weight="1"/>
-        <ImageView
-            android:id="@+id/documentation_btn"
-            android:layout_width="35dp"
-            android:layout_height="30dp"
-            android:src="@android:drawable/star_big_on"
-            android:layout_weight="0"/>
+        android:layout_height="match_parent"
+        android:padding="8dp">
+        <Spinner
+            android:id="@+id/types_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </Spinner>
     </LinearLayout>
 </RelativeLayout>

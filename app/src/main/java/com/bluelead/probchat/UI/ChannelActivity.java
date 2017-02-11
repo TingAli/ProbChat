@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
 
 import com.bluelead.probchat.R;
 
@@ -65,8 +64,8 @@ public class ChannelActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            TextView textView = (TextView)findViewById(R.id.response_tv);
-                            textView.setText(textView.getText() + "\n" + message);
+                            //TextView textView = (TextView)findViewById(R.id.response_tv);
+                            //textView.setText(textView.getText() + "\n" + message);
                         }
                     });
                 }

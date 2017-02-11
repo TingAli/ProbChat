@@ -5,30 +5,29 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.UUID;
-
 /**
  * Created by Imdad Ali on 11/02/2017.
  */
 
 public class Type implements Parcelable {
 
-    private UUID Id;
-    @SerializedName("type")
-    private String Type;
+    @SerializedName("id")
+    private String Id;
+    @SerializedName("caption")
+    private String Caption;
 
-    public UUID getId() {
+    public String getId() {
         return Id;
     }
 
-    public String getType() {
-        return Type;
+    public String getCaption() {
+        return Caption;
     }
 
     public static final Parcelable.Creator<Type> CREATOR = new Parcelable.Creator<Type>() {
         public Type createFromParcel(Parcel source) {
             Type type = new Type();
-            type.Type = source.readString();
+            type.Caption = source.readString();
 
             return type;
         }
@@ -45,6 +44,7 @@ public class Type implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(Type);
+        dest.writeString(Id);
+        dest.writeString(Caption);
     }
 }
