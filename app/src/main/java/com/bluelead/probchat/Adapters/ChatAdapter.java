@@ -1,10 +1,12 @@
 package com.bluelead.probchat.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bluelead.probchat.Models.Message;
@@ -67,20 +69,28 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     class ChatViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
+        RelativeLayout relativeLayout;
         TextView messageTextView;
         TextView messageDateTextView;
 
         public ChatViewHolder(View itemView) {
             super(itemView);
+            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.singleMessageContainer);
             messageTextView = (TextView) itemView.findViewById(R.id.message_content_tv);
-            messageDateTextView = (TextView) itemView.findViewById(R.id.message_date_tv);
+            //messageDateTextView = (TextView) itemView.findViewById(R.id.message_date_tv);
 
             itemView.setOnClickListener(this);
         }
 
         void bind(Message message) {
             messageTextView.setText(message.getMessage());
-            messageDateTextView.setText(message.getDate().toString());
+            if(message.getIsIncomingMessage()) {
+                relativeLayout.setBackgroundColor(Color.rgb(145, 170, 223));
+            }
+            else {
+                relativeLayout.setBackgroundColor(Color.rgb(139, 157, 195));
+            }
+           // messageDateTextView.setText(message.getDate().toString());
         }
 
         @Override

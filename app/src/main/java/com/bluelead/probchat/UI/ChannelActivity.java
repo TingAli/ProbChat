@@ -92,6 +92,9 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
         message.setIsIncomingMessage(false);
         webSocketAsync.sendMessage(JSONParser.messageToJson(message));
         mAllMessages.add(message);
+        mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems,
+                ChannelActivity.this, mAllMessages);
+        mChatRoomRecyclerView.setAdapter(mChatAdapter);
     }
 
     private void showContent() {
