@@ -38,6 +38,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         mAllMessages.add(message);
     }
 
+    public ArrayList<Message> getmAllMessages() {
+        return mAllMessages;
+    }
+
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
     }
@@ -72,12 +76,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         RelativeLayout relativeLayout;
         TextView messageTextView;
         TextView messageDateTextView;
+        TextView personNameTextView;
 
         public ChatViewHolder(View itemView) {
             super(itemView);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.singleMessageContainer);
             messageTextView = (TextView) itemView.findViewById(R.id.message_content_tv);
-            //messageDateTextView = (TextView) itemView.findViewById(R.id.message_date_tv);
+            messageDateTextView = (TextView) itemView.findViewById(R.id.message_date_tv);
+            personNameTextView = (TextView) itemView.findViewById(R.id.person_name_tv);
 
             itemView.setOnClickListener(this);
         }
@@ -86,17 +92,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             messageTextView.setText(message.getMessage());
             if(message.getIsIncomingMessage()) {
                 relativeLayout.setBackgroundColor(Color.rgb(145, 170, 223));
+                personNameTextView.setText("OTHER PERSON:");
             }
             else {
                 relativeLayout.setBackgroundColor(Color.rgb(139, 157, 195));
+                personNameTextView.setText("YOU:");
             }
-           // messageDateTextView.setText(message.getDate().toString());
+            messageDateTextView.setText(message.getDate().toString());
         }
 
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
             mOnClickListener.onListItemClick(clickedPosition);
+            if(mAllMessages.get(clickedPosition).getDocumented()) {
+                mAllMessages.get(clickedPosition).setDocumented(true);
+            }
+            else {
+                mAllMessages.get(clickedPosition).setDocumented(false);
+            }
         }
     }
 }

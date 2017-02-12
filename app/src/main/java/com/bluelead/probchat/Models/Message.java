@@ -3,12 +3,14 @@ package com.bluelead.probchat.Models;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by Imdad Ali on 11/02/2017.
  */
 
 public class Message {
+    private UUID Uuid;
     @Expose
     private int id;
     @Expose
@@ -23,6 +25,24 @@ public class Message {
         date.setTime((long)timestamp*1000);
 
         return date;
+    }
+
+    private Date date;
+
+    public Date getDateClient() {
+        return date;
+    }
+
+    public void setDateClient(Date date) {
+        this.date = date;
+    }
+
+    public void setUuid() {
+        Uuid = UUID.randomUUID();
+    }
+
+    public UUID getUuid() {
+        return Uuid;
     }
 
     @Expose

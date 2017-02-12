@@ -72,6 +72,7 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
         mSendMessageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Message messageToSend = new Message(mMessageToSend.getText().toString(), false);
+                messageToSend.setUuid();
                 messageToSend.setAction("message");
                 sendMsg(messageToSend);
             }
@@ -164,6 +165,7 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
                                     mMessagesReceived = JSONParser.messagesFromJson(mServerResponse);
                                     for(Message messageReceived : mMessagesReceived) {
                                         messageReceived.setIsIncomingMessage(true);
+                                        messageReceived.setUuid();
                                         mAllMessages.add(messageReceived);
                                     }
                                     mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems,

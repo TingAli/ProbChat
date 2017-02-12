@@ -62,6 +62,23 @@ public abstract class JSONParser { // http://www.vogella.com/tutorials/JavaLibra
         return fromJson;
     }
 
+    public static ArrayList<Message> messagesFromJsonSaved(String messagesInJson) {
+        Gson gson = new Gson();
+        java.lang.reflect.Type typeOfMessage = new TypeToken<Message>() {}.getType();
+        Message messageFromJson =
+                gson.fromJson(messagesInJson, typeOfMessage);
+        ArrayList<Message> fromJson = new ArrayList<Message>();
+        fromJson.add(messageFromJson);
 
+        return fromJson;
+    }
 
+    public static String messagesToJsonSaved(ArrayList<Message> messagesArrayList) {
+        Gson gson = new Gson();
+        java.lang.reflect.Type typeOfMessage = new TypeToken<Message>() {}.getType();
+        String messageFromJson =
+                gson.toJson(messagesArrayList, typeOfMessage);
+
+        return messageFromJson;
+    }
 }

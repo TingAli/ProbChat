@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TypesSpinnerAdapter mTypesSpinnerAdapter;
     private Type mTypeSelected;
     private Bundle mBundle;
+    private RecyclerView mDocumentedRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
