@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.bluelead.probchat.DataConverters.JSONParser;
 import com.bluelead.probchat.Models.Message;
@@ -29,11 +31,15 @@ public class ChannelActivity extends AppCompatActivity {
     private ArrayList<Message> mLatestClientMessages;
     private ArrayList<Message> mLatestServerMessages;
     private WebSocketAsync webSocketAsync;
+    private LinearLayout mLoadingLinearLayout, mContentLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
+
+        mLoadingLinearLayout = (LinearLayout) findViewById(R.id.channel_loading_ly);
+        mContentLinearLayout = (LinearLayout) findViewById(R.id.channel_content_ly);
 
         mTypeSelected = getIntent().getParcelableExtra("PAR_KEY");
         System.out.println(mTypeSelected);
@@ -57,6 +63,16 @@ public class ChannelActivity extends AppCompatActivity {
 
     private Message getLatestClientMessage() {
         return mLatestClientMessages.get(mLatestClientMessages.size() - 1);
+    }
+
+    private void showContent() {
+        mLoadingLinearLayout.setVisibility(View.INVISIBLE);
+        mContentLinearLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoading() {
+        mLoadingLinearLayout.setVisibility(View.VISIBLE);
+        mContentLinearLayout.setVisibility(View.INVISIBLE);
     }
 
     public class WebSocketAsync extends AsyncTask<Void, Void, Void> {
@@ -108,8 +124,11 @@ public class ChannelActivity extends AppCompatActivity {
                                     // display the message
                                     System.out.println(getLatestServerMessage().getMessage());
                                 }
-                                if(object.getString("action").equals("match")) {
-
+                                else if(object.getString("action").equals("match")) {
+                                    showContent();
+                                }
+                                else {
+                                    showLoading();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
