@@ -34,8 +34,7 @@ public class Message {
 
     public String getAction() { return this.action; }
 
-    public Message(int id, String message, boolean documented) {
-        this.id = id;
+    public Message(String message, boolean documented) {
         this.msg = message;
         this.documented = documented;
     }

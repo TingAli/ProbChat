@@ -6,7 +6,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:gravity="center">
         <TextView
             android:id="@+id/pleaseWait_tv"
@@ -23,18 +23,39 @@
         android:orientation="vertical"
         android:id="@+id/channel_content_ly"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
+        android:layout_height="match_parent"
+        android:visibility="visible">
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible">
+            android:layout_height="0dp"
+            android:layout_weight="4">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/messages_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        </android.support.v7.widget.RecyclerView>
+            </android.support.v7.widget.RecyclerView>
+        </ScrollView>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
-
+            android:layout_height="0dp"
+            android:layout_weight="1.5">
+            <EditText
+                android:id="@+id/messageToSend_et"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:textSize="14sp"
+                android:textColor="#000000"/>
+            <Button
+                android:id="@+id/sendMessage_btn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/send_button"
+                android:backgroundTint="@color/colorPrimaryLight">
+            </Button>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

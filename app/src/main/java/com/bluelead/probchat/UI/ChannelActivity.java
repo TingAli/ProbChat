@@ -5,9 +5,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.bluelead.probchat.Adapters.ChatAdapter;
 import com.bluelead.probchat.DataConverters.JSONParser;
 import com.bluelead.probchat.Models.Message;
 import com.bluelead.probchat.Models.Type;
@@ -23,7 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-public class ChannelActivity extends AppCompatActivity {
+public class ChannelActivity extends AppCompatActivity implements ChatAdapter.ListItemClickListener {
     private Type mTypeSelected;
     private final Context CONTEXT = ChannelActivity.this;
     private boolean mConnectionOpen;
@@ -32,6 +37,11 @@ public class ChannelActivity extends AppCompatActivity {
     private ArrayList<Message> mLatestServerMessages;
     private WebSocketAsync webSocketAsync;
     private LinearLayout mLoadingLinearLayout, mContentLinearLayout;
+    private RecyclerView mChatRoomRecyclerView;
+    private EditText mMessageToSend;
+    private Button mSendMessageButton;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ChatAdapter mChatAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,20 @@ public class ChannelActivity extends AppCompatActivity {
 
         mLoadingLinearLayout = (LinearLayout) findViewById(R.id.channel_loading_ly);
         mContentLinearLayout = (LinearLayout) findViewById(R.id.channel_content_ly);
+        mChatRoomRecyclerView = (RecyclerView) findViewById(R.id.messages_rv);
+        mMessageToSend = (EditText) findViewById(R.id.messageToSend_et);
+        mSendMessageButton = (Button) findViewById(R.id.sendMessage_btn);
+
+        mLayoutManager = new LinearLayoutManager(CONTEXT);
+        mChatRoomRecyclerView.setLayoutManager(mLayoutManager);
+        mChatRoomRecyclerView.setHasFixedSize(true);
+
+        mSendMessageButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Message messageToSend = new Message(mMessageToSend.getText().toString(), false);
+                sendMsg(messageToSend);
+            }
+        });
 
         mTypeSelected = getIntent().getParcelableExtra("PAR_KEY");
         System.out.println(mTypeSelected);
@@ -66,6 +90,14 @@ public class ChannelActivity extends AppCompatActivity {
     }
 
     private void showContent() {
+        int numberOfItems = 0;
+        if(mLatestClientMessages != null || mLatestServerMessages != null)
+        {
+            numberOfItems = (mLatestClientMessages.size() + mLatestClientMessages.size());
+        }
+        mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, this, mLatestServerMessages,
+                mLatestClientMessages);
+
         mLoadingLinearLayout.setVisibility(View.INVISIBLE);
         mContentLinearLayout.setVisibility(View.VISIBLE);
     }
@@ -73,6 +105,11 @@ public class ChannelActivity extends AppCompatActivity {
     private void showLoading() {
         mLoadingLinearLayout.setVisibility(View.VISIBLE);
         mContentLinearLayout.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        System.out.println("Clicked: " + clickedItemIndex);
     }
 
     public class WebSocketAsync extends AsyncTask<Void, Void, Void> {
