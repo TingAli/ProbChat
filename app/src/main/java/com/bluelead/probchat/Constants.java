@@ -6,4 +6,5 @@ package com.bluelead.probchat;
 
 public class Constants {
     public static final String MATCHING_ACTION = "matching";
+    public static final String MATCHED_ACTION = "match";
 }

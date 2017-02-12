@@ -1,8 +1,12 @@
 package com.bluelead.probchat.DataConverters;
 
+import com.bluelead.probchat.Models.LobbyServerResponse;
+import com.bluelead.probchat.Models.Message;
+import com.bluelead.probchat.Models.MessageServerResponse;
 import com.bluelead.probchat.Models.Type;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
 
 /**
@@ -27,5 +31,35 @@ public abstract class JSONParser { // http://www.vogella.com/tutorials/JavaLibra
         return fromJson;
     }
 
+    public static LobbyServerResponse lobbyServerResponseFromJson(String lobbyServerResponseInJson) {
+        Gson gson = new Gson();
+        java.lang.reflect.Type typeOfLobbyServerResponse =
+                new TypeToken<LobbyServerResponse>() {}.getType();
+        LobbyServerResponse fromJson = gson.fromJson(lobbyServerResponseInJson,
+                typeOfLobbyServerResponse);
+
+        return fromJson;
+    }
+
+    public static String messageToJson(Message message) {
+        Gson gson = new Gson();
+        java.lang.reflect.Type typeOfMessage = new TypeToken<Message>() {}.getType();
+        String json = gson.toJson(message);
+
+        return json;
+    }
+
+    public static ArrayList<Message> messagesFromJson(String messagesInJson) {
+        Gson gson = new Gson();
+        java.lang.reflect.Type typeOfMessage = new TypeToken<MessageServerResponse>() {}.getType();
+        MessageServerResponse messageServerResponsesFromJson =
+                gson.fromJson(messagesInJson, typeOfMessage);
+        ArrayList<Message> fromJson = new ArrayList<Message>();
+        for(Message msg : messageServerResponsesFromJson.getMsgs()) {
+            fromJson.add(msg);
+        }
+
+        return fromJson;
+    }
 
 }

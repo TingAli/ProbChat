@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.bluelead.probchat.DataConverters.JSONParser;
+import com.bluelead.probchat.Models.Message;
 import com.bluelead.probchat.Models.Type;
 import com.bluelead.probchat.R;
 
@@ -16,11 +17,17 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class ChannelActivity extends AppCompatActivity {
     private Type mTypeSelected;
     private final Context CONTEXT = ChannelActivity.this;
     private boolean mConnectionOpen;
+    private String mServerResponse;
+    private static int count = 0;
+    private ArrayList<Message> mLatestClientMessages;
+    private ArrayList<Message> mLatestServerMessages;
+    private WebSocketAsync webSocketAsync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,31 +37,33 @@ public class ChannelActivity extends AppCompatActivity {
         mTypeSelected = getIntent().getParcelableExtra("PAR_KEY");
         System.out.println(mTypeSelected);
 
-        WebSocketAsync webSocketAsync = new WebSocketAsync();
+        webSocketAsync = new WebSocketAsync();
         webSocketAsync.execute();
 
         webSocketAsync.sendMessage(JSONParser.typeToJson(mTypeSelected));
 
     }
 
+    private void sendMsg(Message message) {
+        webSocketAsync.sendMessage(JSONParser.messageToJson(message));
+        mLatestClientMessages.add(message);
+    }
+
+    private Message getLatestServerMessage() {
+        return mLatestServerMessages.get(mLatestServerMessages.size() - 1);
+    }
+
+    private Message getLatestClientMessage() {
+        return mLatestClientMessages.get(mLatestClientMessages.size() - 1);
+    }
+
     public class WebSocketAsync extends AsyncTask<Void, Void, Void> {
         private WebSocketClient mWebSocketClient;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
         @Override
         protected Void doInBackground(Void... params) {
             connectWebSocket();
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            //Should try to send message here. Use interface for callback if it doesn't work.
         }
 
         private void connectWebSocket() {
@@ -83,8 +92,13 @@ public class ChannelActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //TextView textView = (TextView)findViewById(R.id.response_tv);
-                            //textView.setText(textView.getText() + "\n" + message);
+                            count++;
+                            mServerResponse = message;
+                            if(count > 0) {
+                                // get message object
+                                mLatestServerMessages = JSONParser.messagesFromJson(mServerResponse);
+                                // display the message
+                            }
                         }
                     });
                 }
