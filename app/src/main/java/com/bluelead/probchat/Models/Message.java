@@ -12,7 +12,7 @@ public class Message {
     @Expose
     private int id;
     @Expose
-    private String message;
+    private String msg;
     @Expose
     private boolean documented;
     @Expose
@@ -25,6 +25,7 @@ public class Message {
         return date;
     }
 
+    @Expose
     private String action;
 
     public void setAction(String action) {
@@ -35,7 +36,7 @@ public class Message {
 
     public Message(int id, String message, boolean documented) {
         this.id = id;
-        this.message = message;
+        this.msg = message;
         this.documented = documented;
     }
 
@@ -44,7 +45,7 @@ public class Message {
     }
 
     public String getMessage() {
-        return this.message;
+        return this.msg;
     }
 
     public boolean getDocumented() {

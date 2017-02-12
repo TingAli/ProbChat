@@ -1,7 +1,6 @@
 package com.bluelead.probchat.Models;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -11,9 +10,9 @@ import java.util.ArrayList;
 
 public class MessageServerResponse {
     @Expose
-    @SerializedName("msgs")
     private ArrayList<Message> msgs;
 
+    @Expose
     private String action;
 
     public void setAction(String action) {

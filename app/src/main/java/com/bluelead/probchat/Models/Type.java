@@ -14,10 +14,10 @@ public class Type implements Parcelable {
 
     @Expose
     @SerializedName("id")
-    private String Id;
+    private String id;
     @Expose
     @SerializedName("caption")
-    private String Caption;
+    private String caption;
 
     private String action;
 
@@ -28,18 +28,18 @@ public class Type implements Parcelable {
     public String getAction() { return this.action; }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public String getCaption() {
-        return Caption;
+        return caption;
     }
 
     public static final Parcelable.Creator<Type> CREATOR = new Parcelable.Creator<Type>() {
         public Type createFromParcel(Parcel source) {
             Type type = new Type();
-            type.Id = source.readString();
-            type.Caption = source.readString();
+            type.id = source.readString();
+            type.caption = source.readString();
             type.action = source.readString();
 
             return type;
@@ -57,8 +57,8 @@ public class Type implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(Id);
-        dest.writeString(Caption);
+        dest.writeString(id);
+        dest.writeString(caption);
         dest.writeString(action);
     }
 }

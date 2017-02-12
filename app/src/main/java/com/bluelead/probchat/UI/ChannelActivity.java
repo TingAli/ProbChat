@@ -2,7 +2,6 @@ package com.bluelead.probchat.UI;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +13,9 @@ import com.bluelead.probchat.R;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +26,6 @@ public class ChannelActivity extends AppCompatActivity {
     private final Context CONTEXT = ChannelActivity.this;
     private boolean mConnectionOpen;
     private String mServerResponse;
-    private static int count = 0;
     private ArrayList<Message> mLatestClientMessages;
     private ArrayList<Message> mLatestServerMessages;
     private WebSocketAsync webSocketAsync;
@@ -41,6 +42,7 @@ public class ChannelActivity extends AppCompatActivity {
         webSocketAsync.execute();
 
         webSocketAsync.sendMessage(JSONParser.typeToJson(mTypeSelected));
+        System.out.println(JSONParser.typeToJson(mTypeSelected));
 
     }
 
@@ -80,7 +82,6 @@ public class ChannelActivity extends AppCompatActivity {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
                     System.out.println("Websocket Opened");
-                    mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
 
                     mConnectionOpen = true;
 
@@ -92,12 +93,26 @@ public class ChannelActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            count++;
                             mServerResponse = message;
-                            if(count > 0) {
-                                // get message object
-                                mLatestServerMessages = JSONParser.messagesFromJson(mServerResponse);
-                                // display the message
+                            JSONObject object = null;
+                            try {
+                                object = (JSONObject) new JSONTokener(message).nextValue();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            System.out.println(object);
+
+                            try {
+                                if(object.getString("action").equals("message")) {
+                                    mLatestServerMessages = JSONParser.messagesFromJson(mServerResponse);
+                                    // display the message
+                                    System.out.println(getLatestServerMessage().getMessage());
+                                }
+                                if(object.getString("action").equals("match")) {
+
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         }
                     });
