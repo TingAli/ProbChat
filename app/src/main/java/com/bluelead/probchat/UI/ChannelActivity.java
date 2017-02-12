@@ -34,8 +34,7 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
     private final Context CONTEXT = ChannelActivity.this;
     private boolean mConnectionOpen;
     private String mServerResponse;
-    private ArrayList<Message> mLatestClientMessages;
-    private ArrayList<Message> mLatestServerMessages;
+    private ArrayList<Message> mAllMessages;
     private ArrayList<Message> mMessagesReceived;
     private WebSocketAsync webSocketAsync;
     private LinearLayout mLoadingLinearLayout, mContentLinearLayout;
@@ -68,8 +67,7 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
         mLayoutManager.setReverseLayout(true);
         mChatRoomRecyclerView.setLayoutManager(mLayoutManager);
 
-        mLatestClientMessages = new ArrayList<Message>();
-        mLatestServerMessages = new ArrayList<Message>();
+        mAllMessages = new ArrayList<Message>();
 
         mSendMessageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -91,29 +89,14 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
     }
 
     private void sendMsg(Message message) {
+        message.setIsIncomingMessage(false);
         webSocketAsync.sendMessage(JSONParser.messageToJson(message));
-        mLatestClientMessages.add(message);
-
-        mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, ChannelActivity.this, mLatestServerMessages,
-                mLatestClientMessages);
-        mChatRoomRecyclerView.setAdapter(mChatAdapter);
-    }
-
-    private Message getLatestServerMessage() {
-        return mLatestServerMessages.get(mLatestServerMessages.size() - 1);
-    }
-
-    private Message getLatestClientMessage() {
-        return mLatestClientMessages.get(mLatestClientMessages.size() - 1);
+        mAllMessages.add(message);
     }
 
     private void showContent() {
-        if(mLatestClientMessages != null || mLatestServerMessages != null)
-        {
-            numberOfItems = (mLatestClientMessages.size() + mLatestClientMessages.size());
-        }
-        mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, this, mLatestServerMessages,
-                mLatestClientMessages);
+
+        mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, this, mAllMessages);
         mChatRoomRecyclerView.setAdapter(mChatAdapter);
 
         mLoadingLinearLayout.setVisibility(View.INVISIBLE);
@@ -177,10 +160,11 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
                                 if(object.getString("action").equals("message")) {
                                     mMessagesReceived = JSONParser.messagesFromJson(mServerResponse);
                                     for(Message messageReceived : mMessagesReceived) {
-                                        mLatestServerMessages.add(messageReceived);
+                                        messageReceived.setIsIncomingMessage(true);
+                                        mAllMessages.add(messageReceived);
                                     }
-                                    mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, ChannelActivity.this, mLatestServerMessages,
-                                            mLatestClientMessages);
+                                    mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems,
+                                            ChannelActivity.this, mAllMessages);
                                     mChatRoomRecyclerView.setAdapter(mChatAdapter);
                                 }
                                 else if(object.getString("action").equals("match")) {

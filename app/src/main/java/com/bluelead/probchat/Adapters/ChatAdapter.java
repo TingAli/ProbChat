@@ -20,18 +20,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private int mNumberItems, mViewHolderCount;
     final private ListItemClickListener mOnClickListener;
     private static final String TAG = ChatAdapter.class.getSimpleName();
-    private static ArrayList<Message> mServerMessages;
-    private static ArrayList<Message> mClientMessages;
+    private static ArrayList<Message> mAllMessages;
     private Context mContext;
 
     public ChatAdapter(Context context, int numberOfItems, ListItemClickListener listener,
-                       ArrayList<Message> serverMessages, ArrayList<Message> clientMessages) {
+                       ArrayList<Message> allMessages) {
         mNumberItems = numberOfItems;
         mOnClickListener = listener;
         mViewHolderCount = 0;
-        mServerMessages = serverMessages;
-        mClientMessages = clientMessages;
+        mAllMessages = allMessages;
         mContext = context;
+    }
+
+    public void addMessage(Message message) {
+        mAllMessages.add(message);
     }
 
     public interface ListItemClickListener {
@@ -54,19 +56,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(ChatAdapter.ChatViewHolder holder, int position) {
-        if(mClientMessages.size() > 0) {
-            holder.bind(mClientMessages.get(mClientMessages.size()-1));
-        }
-        if(mServerMessages.size() > 0) {
-            holder.bind(mServerMessages.get(mServerMessages.size()-1));
-        }
+        holder.bind(mAllMessages.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mServerMessages.size() + mClientMessages.size();
+        return mAllMessages.size();
     }
-    
+
     class ChatViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
@@ -75,7 +72,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         public ChatViewHolder(View itemView) {
             super(itemView);
-            messageTextView = (TextView) itemView.findViewById(R.id.message_content);
+            messageTextView = (TextView) itemView.findViewById(R.id.message_content_tv);
             messageDateTextView = (TextView) itemView.findViewById(R.id.message_date_tv);
 
             itemView.setOnClickListener(this);

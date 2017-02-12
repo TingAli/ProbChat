@@ -28,6 +28,16 @@ public class Message {
     @Expose
     private String action;
 
+    private boolean isIncomingMessage;
+
+    public void setIsIncomingMessage(boolean isIncomingMessage) {
+        this.isIncomingMessage = isIncomingMessage;
+    }
+
+    public boolean getIsIncomingMessage() {
+        return this.isIncomingMessage;
+    }
+
     public void setAction(String action) {
         this.action = action;
     }

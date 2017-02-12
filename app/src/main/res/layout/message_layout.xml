@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/personName"
+        android:id="@+id/message_date_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
@@ -16,7 +16,7 @@
         />
 
     <TextView
-        android:id="@+id/singleMessage"
+        android:id="@+id/message_content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
