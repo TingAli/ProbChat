@@ -1,10 +1,14 @@
 package com.bluelead.probchat.UI;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import com.bluelead.probchat.DataConverters.JSONParser;
+import com.bluelead.probchat.Models.Type;
 import com.bluelead.probchat.R;
 
 import org.java_websocket.client.WebSocketClient;
@@ -14,11 +18,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class ChannelActivity extends AppCompatActivity {
+    private Type mTypeSelected;
+    private final Context CONTEXT = ChannelActivity.this;
+    private boolean mConnectionOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
+
+        mTypeSelected = getIntent().getParcelableExtra("PAR_KEY");
+        System.out.println(mTypeSelected);
+
+        WebSocketAsync webSocketAsync = new WebSocketAsync();
+        webSocketAsync.execute();
+
+        webSocketAsync.sendMessage(JSONParser.typeToJson(mTypeSelected));
+
     }
 
     public class WebSocketAsync extends AsyncTask<Void, Void, Void> {
@@ -56,6 +72,9 @@ public class ChannelActivity extends AppCompatActivity {
                 public void onOpen(ServerHandshake serverHandshake) {
                     System.out.println("Websocket Opened");
                     mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+
+                    mConnectionOpen = true;
+
                 }
 
                 @Override
@@ -73,19 +92,34 @@ public class ChannelActivity extends AppCompatActivity {
                 @Override
                 public void onClose(int i, String s, boolean b) {
                     System.out.println("Websocket Closed " + s);
+
+                    mConnectionOpen = false;
                 }
 
                 @Override
                 public void onError(Exception e) {
                     System.out.println("Websocket Error " + e.getMessage());
+
+                    mConnectionOpen = false;
                 }
             };
 
             mWebSocketClient.connect();
         }
 
-        private void sendMessage(String message) {
-            mWebSocketClient.send(message);
+        private void sendMessage(final String message) {
+            if(mConnectionOpen) {
+                mWebSocketClient.send(message);
+            }
+            else {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendMessage(message);
+                    }
+                }, 100);
+            }
         }
     }
 

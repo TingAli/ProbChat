@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bluelead.probchat.Adapters.TypesSpinnerAdapter;
 import com.bluelead.probchat.Models.Type;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner mTypesSpinner;
     private TypesSpinnerAdapter mTypesSpinnerAdapter;
     private Type mTypeSelected;
+    private Bundle mBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +60,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         new TypesQueryTask().execute();
-
-        //new WebSocketAsync().execute();
-
-
     }
 
     public class TypesQueryTask extends AsyncTask<Void, Void, ArrayList<Type>> {
@@ -129,7 +127,20 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_start) {
             //start activity channel
-            startActivity(new Intent(this, ChannelActivity.class));
+            if(mTypeSelected != null) {
+                Class channelActivity = ChannelActivity.class;
+                Intent channelIntent = new Intent(CONTEXT, channelActivity);
+
+                mBundle = new Bundle();
+                mTypeSelected.setAction(Constants.MATCHING_ACTION);
+                mBundle.putParcelable("PAR_KEY", mTypeSelected);
+                channelIntent.putExtras(mBundle);
+
+                startActivity(channelIntent);
+            }
+            else {
+                Toast.makeText(CONTEXT, "ERROR", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 
