@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public abstract class NetworkUtils {
     private static ArrayList<Type> mTypesArrayList;
-    private static final String PROBLEM_URL = "http://b116.ml/probchat/";
+    private static final String PROBLEM_URL = "http://probchat.tk/a/";
 
 
     public static boolean isOnline(Context context) {

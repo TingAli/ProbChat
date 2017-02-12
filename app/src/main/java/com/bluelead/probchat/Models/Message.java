@@ -18,7 +18,7 @@ public class Message {
     @Expose
     private long timestamp;
 
-    private Date getDate() {
+    public Date getDate() {
         Date date = new Date ();
         date.setTime((long)timestamp*1000);
 

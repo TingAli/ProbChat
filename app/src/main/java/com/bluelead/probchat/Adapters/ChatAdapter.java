@@ -54,34 +54,36 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(ChatAdapter.ChatViewHolder holder, int position) {
-        holder.bind(mClientMessages.get(position));
-        holder.bind(mServerMessages.get(position));
+        if(mClientMessages.size() > 0) {
+            holder.bind(mClientMessages.get(mClientMessages.size()-1));
+        }
+        if(mServerMessages.size() > 0) {
+            holder.bind(mServerMessages.get(mServerMessages.size()-1));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mServerMessages.size() + mClientMessages.size();
     }
-
+    
     class ChatViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         TextView messageTextView;
+        TextView messageDateTextView;
 
         public ChatViewHolder(View itemView) {
             super(itemView);
-
-            //listItemImageView = (ImageView) itemView.findViewById(R.id.iv_poster);
             messageTextView = (TextView) itemView.findViewById(R.id.message_content);
+            messageDateTextView = (TextView) itemView.findViewById(R.id.message_date_tv);
 
             itemView.setOnClickListener(this);
         }
 
         void bind(Message message) {
-            int count = 0;
-            while(count != mClientMessages.size()-1) {
-                messageTextView.setText(message.getMessage());
-            }
+            messageTextView.setText(message.getMessage());
+            messageDateTextView.setText(message.getDate().toString());
         }
 
         @Override

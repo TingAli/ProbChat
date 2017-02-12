@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -35,13 +36,15 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
     private String mServerResponse;
     private ArrayList<Message> mLatestClientMessages;
     private ArrayList<Message> mLatestServerMessages;
+    private ArrayList<Message> mMessagesReceived;
     private WebSocketAsync webSocketAsync;
     private LinearLayout mLoadingLinearLayout, mContentLinearLayout;
     private RecyclerView mChatRoomRecyclerView;
     private EditText mMessageToSend;
     private Button mSendMessageButton;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private ChatAdapter mChatAdapter;
+    private int numberOfItems = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +57,24 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
         mMessageToSend = (EditText) findViewById(R.id.messageToSend_et);
         mSendMessageButton = (Button) findViewById(R.id.sendMessage_btn);
 
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        View view = this.getCurrentFocus();
+        if(view != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
         mLayoutManager = new LinearLayoutManager(CONTEXT);
+        mLayoutManager.setStackFromEnd(true);
+        mLayoutManager.setReverseLayout(true);
         mChatRoomRecyclerView.setLayoutManager(mLayoutManager);
-        mChatRoomRecyclerView.setHasFixedSize(true);
+
+        mLatestClientMessages = new ArrayList<Message>();
+        mLatestServerMessages = new ArrayList<Message>();
 
         mSendMessageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Message messageToSend = new Message(mMessageToSend.getText().toString(), false);
+                messageToSend.setAction("message");
                 sendMsg(messageToSend);
             }
         });
@@ -79,6 +93,10 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
     private void sendMsg(Message message) {
         webSocketAsync.sendMessage(JSONParser.messageToJson(message));
         mLatestClientMessages.add(message);
+
+        mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, ChannelActivity.this, mLatestServerMessages,
+                mLatestClientMessages);
+        mChatRoomRecyclerView.setAdapter(mChatAdapter);
     }
 
     private Message getLatestServerMessage() {
@@ -90,13 +108,13 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
     }
 
     private void showContent() {
-        int numberOfItems = 0;
         if(mLatestClientMessages != null || mLatestServerMessages != null)
         {
             numberOfItems = (mLatestClientMessages.size() + mLatestClientMessages.size());
         }
         mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, this, mLatestServerMessages,
                 mLatestClientMessages);
+        mChatRoomRecyclerView.setAdapter(mChatAdapter);
 
         mLoadingLinearLayout.setVisibility(View.INVISIBLE);
         mContentLinearLayout.setVisibility(View.VISIBLE);
@@ -157,9 +175,13 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
 
                             try {
                                 if(object.getString("action").equals("message")) {
-                                    mLatestServerMessages = JSONParser.messagesFromJson(mServerResponse);
-                                    // display the message
-                                    System.out.println(getLatestServerMessage().getMessage());
+                                    mMessagesReceived = JSONParser.messagesFromJson(mServerResponse);
+                                    for(Message messageReceived : mMessagesReceived) {
+                                        mLatestServerMessages.add(messageReceived);
+                                    }
+                                    mChatAdapter = new ChatAdapter(CONTEXT, numberOfItems, ChannelActivity.this, mLatestServerMessages,
+                                            mLatestClientMessages);
+                                    mChatRoomRecyclerView.setAdapter(mChatAdapter);
                                 }
                                 else if(object.getString("action").equals("match")) {
                                     showContent();
@@ -208,5 +230,9 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        webSocketAsync.mWebSocketClient.close();
+        super.onDestroy();
+    }
 }
