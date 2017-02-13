@@ -178,6 +178,10 @@ public class ChannelActivity extends AppCompatActivity implements ChatAdapter.Li
                                 else {
                                     showLoading();
                                 }
+
+
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
